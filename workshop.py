@@ -10,6 +10,7 @@ USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 
 
 
 def download(mods):
+    print("Downloading mods...")
     steamcmd = ["/steamcmd/steamcmd.sh"]
     steamcmd.extend(["+force_install_dir", "/arma3"])
     steamcmd.extend(["+login", os.environ["STEAM_USER"], os.environ["STEAM_PASSWORD"]])
@@ -17,10 +18,11 @@ def download(mods):
         steamcmd.extend(["+workshop_download_item", "107410", id])
     steamcmd.extend(["+quit"])
     subprocess.call(steamcmd)
-    print("Renaming files to lowercase...")
-    os.system("(cd {} && find . -depth -exec rename -v 's/(.*)\/([^\/]*)/$1\/\L$2/' {{}} \;)".format(os.path.join("/arma3", WORKSHOP)))
 
-
+def lowercase_workshop_dir(path: str):
+    print("Renaming files to lowercase in {}...".format(path))
+    os.system("(cd {} && find . -depth -exec rename -v 's/(.*)\/([^\/]*)/$1\/\L$2/' {{}} \;)".format(path))
+    
 def preset(mod_file):
     if mod_file.startswith("http"):
         req = urllib.request.Request(
@@ -43,5 +45,6 @@ def preset(mod_file):
             moddirs.append(moddir)
         download(mods)
         for moddir in moddirs:
+            lowercase_workshop_dir(moddir)
             keys.copy(moddir)
     return moddirs
