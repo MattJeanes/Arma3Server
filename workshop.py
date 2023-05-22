@@ -17,6 +17,8 @@ def download(mods):
         steamcmd.extend(["+workshop_download_item", "107410", id])
     steamcmd.extend(["+quit"])
     subprocess.call(steamcmd)
+    print("Renaming files to lowercase...")
+    os.system("(cd {} && find . -depth -exec rename -v 's/(.*)\/([^\/]*)/$1\/\L$2/' {{}} \;)".format(os.path.join("/arma3", WORKSHOP)))
 
 
 def preset(mod_file):
